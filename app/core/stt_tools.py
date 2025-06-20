@@ -8,17 +8,16 @@ from ..utils.logger import logger
 
 
 class STTTools:
-    """STT工具类，封装stt-main的工具函数"""
+    """STT工具类，封装语音识别相关工具函数"""
     
     @staticmethod
     def setup_ffmpeg_path():
         """设置FFmpeg路径"""
         current_dir = Path(__file__).parent.parent.parent
+        ffmpeg_path = current_dir / "app" / "stt"
         if sys.platform == 'win32':
-            ffmpeg_path = current_dir / "stt-main"
             os.environ['PATH'] = f'{ffmpeg_path};{ffmpeg_path}/ffmpeg;' + os.environ['PATH']
         else:
-            ffmpeg_path = current_dir / "stt-main"
             os.environ['PATH'] = f'{ffmpeg_path}:{ffmpeg_path}/ffmpeg:' + os.environ['PATH']
     
     @staticmethod

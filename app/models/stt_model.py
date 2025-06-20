@@ -126,7 +126,7 @@ class STTConfig:
         "stt_language": STTLanguage.AUTO.value,
         "stt_output_format": STTOutputFormat.SRT.value,
         "stt_device": STTDevice.CPU.value,
-        "stt_model_path": "./stt-main/models",
+        "stt_model_path": "./app/stt/models",
         "stt_beam_size": 5,
         "stt_best_of": 5,
         "stt_temperature": 0,

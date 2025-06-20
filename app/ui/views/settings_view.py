@@ -1510,7 +1510,7 @@ class SettingsPage(PageBase):
                         self.pick_folder(
                             self._["stt_model_path"],
                             ft.TextField(
-                                value=self.get_config_value("stt_model_path", "./stt-main/models"),
+                                value=self.get_config_value("stt_model_path", "./app/stt/models"),
                                 width=300,
                                 on_change=self.on_change,
                                 data="stt_model_path",

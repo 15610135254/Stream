@@ -66,7 +66,7 @@
     "stt_language": "auto",
     "stt_output_format": "srt",
     "stt_device": "cpu",
-    "stt_model_path": "./stt-main/models",
+    "stt_model_path": "./app/stt/models",
     "stt_beam_size": 5,
     "stt_best_of": 5,
     "stt_temperature": 0,

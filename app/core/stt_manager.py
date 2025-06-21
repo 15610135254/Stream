@@ -161,15 +161,21 @@ class STTManager:
         return info
     
     def is_model_available(self, model_name: str) -> bool:
-        """检查模型是否可用"""
+        """检查模型是否可用（本地存在或可下载）"""
         if not self.is_available:
             return False
         
+        # 远程模型始终可用（需要网络）
         if model_name.find('/') > 0:
             return True
         
+        # 检查本地是否已下载
         model_path = self.get_model_path(model_name)
-        return Path(model_path).exists() or model_name.find('/') > 0
+        if Path(model_path).exists():
+            return True
+        
+        # 基础模型可以从HuggingFace自动下载
+        return True
     
     def get_model(self, model_name: str, device: str = "cpu", compute_type: str = "float32"):
         """获取或创建Whisper模型实例"""
@@ -182,24 +188,53 @@ class STTManager:
             return self.model_cache[cache_key]
         
         try:
-            model_path = self.get_model_path(model_name)
+            # 检查模型是否本地存在
+            config = self.get_stt_config()
+            model_dir = Path(config["model_path"])
+            
+            # 确定实际的模型名称和路径
+            actual_model_name = model_name
             if model_name.startswith('distil'):
-                model_name = model_name.replace('-whisper', '')
+                actual_model_name = model_name.replace('-whisper', '')
+            
+            # 检查本地模型路径
+            if model_name.find('/') > 0:
+                # 远程模型，直接使用模型名
+                model_path = model_name
+                local_files_only = False
+            else:
+                # 本地模型，先检查是否存在
+                if model_name.startswith('distil'):
+                    local_model_path = model_dir / f"models--Systran--faster-{model_name}" / "snapshots"
+                else:
+                    local_model_path = model_dir / f"models--Systran--faster-whisper-{model_name}" / "snapshots"
+                
+                if local_model_path.exists():
+                    # 本地已存在，使用本地路径
+                    model_path = str(local_model_path.parent)
+                    local_files_only = True
+                else:
+                    # 本地不存在，使用模型名让faster-whisper自动下载
+                    model_path = actual_model_name
+                    local_files_only = False
             
             model = self.WhisperModel(
                 model_path,
                 device=device,
                 compute_type=compute_type,
-                download_root=self.get_stt_config()["model_path"],
-                local_files_only=False if model_name.find('/') > 0 else True
+                download_root=config["model_path"],
+                local_files_only=local_files_only
             )
             
             self.model_cache[cache_key] = model
             return model
             
         except Exception as e:
-            error_msg = f'从huggingface.co下载模型 {model_name} 失败，请检查网络连接' if model_name.find('/') > 0 else ''
-            raise RuntimeError(f"{error_msg} {str(e)}")
+            if model_name.find('/') > 0:
+                error_msg = f'从huggingface.co下载远程模型 {model_name} 失败，请检查网络连接'
+            else:
+                error_msg = f'加载或下载模型 {model_name} 失败，请检查网络连接'
+            raise RuntimeError(f"{error_msg}: {str(e)}")
     
     def extract_audio_from_video(self, video_path: str, output_path: str) -> bool:
         """从视频文件提取音频"""

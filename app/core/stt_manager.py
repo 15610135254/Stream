@@ -88,7 +88,7 @@ class STTManager:
             "temperature": user_config.get("stt_temperature", 0),
             "vad_filter": user_config.get("stt_vad_filter", True),
             "condition_on_previous_text": user_config.get("stt_condition_on_previous_text", False),
-            "initial_prompt_zh": user_config.get("stt_initial_prompt_zh", "转录为中文简体。")
+            "initial_prompt_zh": user_config.get("stt_initial_prompt_zh", "以下是普通话内容，请转录为中文简体。")
         }
     
     def get_model_path(self, model_name: str) -> str:
@@ -238,7 +238,7 @@ class STTManager:
         text = text.strip().replace('&#39;', "'")
         text = re.sub(r'&#\d+;', '', text)
         
-        if re.match(r'^[，。、？''""；：（｛｝【】）:;"\'\s \d`!@#$%^&*()_+=.,?/\\-]*$', text) or len(text) <= 1:
+        if re.match(r'^[，。、？''""；：（｛｝【】）:;"\'\\s \\d`!@#$%^&*()_+=.,?/\\-]*$', text) or len(text) <= 1:
             return ""
         
         return text
@@ -439,7 +439,8 @@ class STTManager:
     
     def get_available_models(self) -> list:
         """获取可用的模型列表"""
-        models = ["tiny", "base", "small", "medium", "large-v3"]
+        from ..core.stt_tools import STTConfig
+        models = STTConfig.get_model_list()
         available_models = []
         
         for model in models:

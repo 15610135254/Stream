@@ -289,9 +289,12 @@ class STTConfig:
     def get_model_list():
         """获取可用模型列表"""
         return [
-            "tiny",
-            "base", 
-            "small",
-            "medium",
-            "large-v3"
+            "tiny", "tiny.en",
+            "base", "base.en",
+            "small", "small.en",
+            "medium", "medium.en",
+            "large-v1", "large-v2", "large-v3", "large-v3-turbo",
+            "distil-whisper-small.en", "distil-whisper-medium.en",
+            "distil-whisper-large-v2", "distil-whisper-large-v3",
+            "zh-plus/faster-whisper-large-v2-japanese-5k-steps"
         ]

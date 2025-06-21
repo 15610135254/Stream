@@ -3,15 +3,28 @@ from enum import Enum
 
 class STTModel(Enum):
     """STT模型选项"""
+    # 基础模型
     TINY = "tiny"
+    TINY_EN = "tiny.en"
     BASE = "base"
+    BASE_EN = "base.en"
     SMALL = "small"
+    SMALL_EN = "small.en"
     MEDIUM = "medium"
+    MEDIUM_EN = "medium.en"
+    LARGE_V1 = "large-v1"
+    LARGE_V2 = "large-v2"
     LARGE_V3 = "large-v3"
-    DISTIL_TINY = "distil-tiny-whisper"
-    DISTIL_SMALL = "distil-small-whisper"
-    DISTIL_MEDIUM = "distil-medium-whisper"
-    DISTIL_LARGE_V3 = "distil-large-v3-whisper"
+    LARGE_V3_TURBO = "large-v3-turbo"
+    
+    # Distil模型
+    DISTIL_SMALL_EN = "distil-whisper-small.en"
+    DISTIL_MEDIUM_EN = "distil-whisper-medium.en"
+    DISTIL_LARGE_V2 = "distil-whisper-large-v2"
+    DISTIL_LARGE_V3 = "distil-whisper-large-v3"
+    
+    # 特殊模型
+    ZH_PLUS_JAPANESE = "zh-plus/faster-whisper-large-v2-japanese-5k-steps"
 
     @classmethod
     def get_models(cls):
@@ -21,12 +34,29 @@ class STTModel(Enum):
     @classmethod
     def get_local_models(cls):
         """获取本地模型选项（不需要网络下载）"""
-        return [cls.TINY.value, cls.BASE.value, cls.SMALL.value, cls.MEDIUM.value, cls.LARGE_V3.value]
+        return [
+            cls.TINY.value, cls.TINY_EN.value,
+            cls.BASE.value, cls.BASE_EN.value,
+            cls.SMALL.value, cls.SMALL_EN.value,
+            cls.MEDIUM.value, cls.MEDIUM_EN.value,
+            cls.LARGE_V1.value, cls.LARGE_V2.value,
+            cls.LARGE_V3.value, cls.LARGE_V3_TURBO.value
+        ]
 
     @classmethod
     def get_distil_models(cls):
         """获取distil模型选项"""
-        return [cls.DISTIL_TINY.value, cls.DISTIL_SMALL.value, cls.DISTIL_MEDIUM.value, cls.DISTIL_LARGE_V3.value]
+        return [
+            cls.DISTIL_SMALL_EN.value,
+            cls.DISTIL_MEDIUM_EN.value,
+            cls.DISTIL_LARGE_V2.value,
+            cls.DISTIL_LARGE_V3.value
+        ]
+    
+    @classmethod
+    def get_remote_models(cls):
+        """获取需要网络下载的模型"""
+        return [cls.ZH_PLUS_JAPANESE.value]
 
 
 class STTLanguage(Enum):
@@ -126,13 +156,13 @@ class STTConfig:
         "stt_language": STTLanguage.AUTO.value,
         "stt_output_format": STTOutputFormat.SRT.value,
         "stt_device": STTDevice.CPU.value,
-        "stt_model_path": "./stt-main/models",
+        "stt_model_path": "./models",
         "stt_beam_size": 5,
         "stt_best_of": 5,
         "stt_temperature": 0,
         "stt_vad_filter": True,
         "stt_condition_on_previous_text": False,
-        "stt_initial_prompt_zh": "转录为中文简体。"
+        "stt_initial_prompt_zh": "以下是普通话内容，请转录为中文简体。"
     }
     
     @classmethod

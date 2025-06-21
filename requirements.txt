@@ -8,6 +8,8 @@ python-dotenv>=1.0.1
 pystray>=0.19.5
 
 # STT (Speech-to-Text) dependencies
-torch>=2.1.2
-faster-whisper>=1.0.0
+torch>=2.7.0
+torchvision>=0.22.0
+torchaudio>=2.7.0
+faster-whisper>=1.1.0
 fsspec>=2024.2.0
